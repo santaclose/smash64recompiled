@@ -325,8 +325,8 @@ std::vector<recomp::GameEntry> supported_games = {
         .rom_hash = 0x38912ac86097bfec,
         .internal_name = "SMASH BROTHERS     ",
         .game_id = u8"smashbrothers.us",
-        .is_enabled = true,
         .save_type = recomp::SaveType::Sram,
+        .is_enabled = true,
         .entrypoint_address = get_entrypoint_address(),
         .entrypoint = recomp_entrypoint,
     },
@@ -337,51 +337,57 @@ namespace zelda64 {
     std::string get_game_thread_name(const OSThread* t) {
         std::string name = "[Game] ";
         // name += std::to_string(t->id);
-        switch (t->id) {
-        case 0:
-            switch (t->priority) {
-            case 150:
-                name += "PIMGR";
-                break;
 
-            case 254:
-                name += "VIMGR";
-                break;
+        if (t->id >= 10000000 && t->id <= 20000000)
+        {
+            name = "[GObjProc] ";
+            name += std::to_string(t->id - 10000000);
+        }
+        else
+        {
+            switch (t->id) {
+            case 0:
+                switch (t->priority) {
+                case 150:
+                    name += "PIMGR";
+                    break;
 
+                case 254:
+                    name += "VIMGR";
+                    break;
+
+                default:
+                    name += std::to_string(t->id);
+                    break;
+                }
+                break;
+            case 1:
+                name += "IDLE";
+                break;
+            case 3:
+                name += "MAIN";
+                break;
+            case 4:
+                name += "AUD";
+                break;
+            case 5:
+                name += "GAMELOOP";
+                break;
+            case 6:
+                name += "CONT";
+                break;
+            case 8:
+                name += "FAULT";
+                break;
+            case 100000000:
+                name += "WEIRD";
+                break;
             default:
                 name += std::to_string(t->id);
                 break;
             }
-            break;
-        case 1:
-            name += "IDLE";
-            break;
-        case 3:
-            name += "MAIN";
-            break;
-        case 4:
-            name += "AUD";
-            break;
-        case 5:
-            name += "GAMELOOP";
-            break;
-        case 6:
-            name += "CONT";
-            break;
-        case 8:
-            name += "FAULT";
-            break;
-        case 10000000 ... 20000000:
-            name = "[GObjProc] ";
-            name += std::to_string(t->id - 10000000);
-            break;
-        case 100000000:
-            name += "WEIRD";
-            break;
-        default:
-            name += std::to_string(t->id);
-            break;
         }
+
 
         return name;
     }

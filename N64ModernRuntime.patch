@@ -1,0 +1,95 @@
+diff --git a/librecomp/CMakeLists.txt b/librecomp/CMakeLists.txt
+index 9f78d4f..ba32ebb 100644
+--- a/librecomp/CMakeLists.txt
++++ b/librecomp/CMakeLists.txt
+@@ -47,7 +47,7 @@ target_include_directories(librecomp PRIVATE
+ target_compile_options(librecomp PRIVATE
+ #    -Wall
+ #    -Wextra
+-    -Wno-unused-parameter
++#    -Wno-unused-parameter
+ )
+ 
+ if (WIN32)
+diff --git a/librecomp/include/librecomp/rsp_vu_impl.hpp b/librecomp/include/librecomp/rsp_vu_impl.hpp
+index dbf46b2..c2f8e26 100644
+--- a/librecomp/include/librecomp/rsp_vu_impl.hpp
++++ b/librecomp/include/librecomp/rsp_vu_impl.hpp
+@@ -21,6 +21,39 @@
+ 
+ #include <cstdint>
+ #include <algorithm>
++#ifdef _MSC_VER
++#include <intrin.h>
++
++uint32_t __inline ctz(uint32_t value)
++{
++    unsigned long trailing_zero = 0;
++
++    if (_BitScanForward(&trailing_zero, value))
++    {
++        return trailing_zero;
++    }
++    else
++    {
++        // This is undefined, I better choose 32 than 0
++        return 32;
++    }
++}
++
++uint32_t __inline clz(uint32_t value)
++{
++    unsigned long leading_zero = 0;
++
++    if (_BitScanReverse(&leading_zero, value))
++    {
++        return 31 - leading_zero;
++    }
++    else
++    {
++        // Same remarks as above
++        return 32;
++    }
++}
++#endif
+ using u32 = uint32_t;
+ 
+ #define ACCH vpu.acch
+@@ -1348,7 +1381,7 @@ auto RSP::VRCP(r128& vd, u8 de, cr128& vt) -> void {
+     } else if (input == -32768) {
+         result = 0xffff'0000;
+     } else {
+-        u32 shift = __builtin_clz(data);
++        u32 shift = clz(data);
+         u32 index = (u64(data) << shift & 0x7fc0'0000) >> 22;
+         result = rspReciprocals[index];
+         result = (0x10000 | result) << 14;
+@@ -1397,10 +1430,12 @@ auto RSP::VRSQ(r128& vd, u8 de, cr128& vt) -> void {
+     if (input > -32768) data -= mask;
+     if (data == 0) {
+         result = 0x7fff'ffff;
+-    } else if (input == -32768) {
++    }
++    else if (input == -32768) {
+         result = 0xffff'0000;
+-    } else {
+-        u32 shift = __builtin_clz(data);
++    }
++    else {
++        u32 shift = clz(data);
+         u32 index = (u64(data) << shift & 0x7fc0'0000) >> 22;
+         result = rspInverseSquareRoots[index & 0x1fe | shift & 1];
+         result = (0x10000 | result) << 14;
+diff --git a/ultramodern/CMakeLists.txt b/ultramodern/CMakeLists.txt
+index 90ac35a..b9b1bcf 100644
+--- a/ultramodern/CMakeLists.txt
++++ b/ultramodern/CMakeLists.txt
+@@ -32,7 +32,7 @@ target_include_directories(ultramodern PUBLIC
+ target_compile_options(ultramodern PRIVATE
+ #    -Wall
+ #    -Wextra
+-    -Wno-unused-parameter
++#    -Wno-unused-parameter
+ )
+ 
+ if (WIN32)

@@ -25,15 +25,15 @@ S_DEPS := $(S_SRCS:.s=.d)
 
 # Link target includes both C and assembly objects
 $(TARGET): $(C_OBJS) $(S_OBJS) patches.ld syms.ld
-	$(LD) $(C_OBJS) $(ASM_OBJS) $(LDFLAGS) -o $@
+	 ld.lld $(C_OBJS) $(ASM_OBJS) $(LDFLAGS) -o $@
 
 # Rule for compiling C files
 $(C_OBJS): %.o : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $< -MMD -MF $(@:.o=.d) -c -o $@
+	clang $(CFLAGS) $(CPPFLAGS) $< -MMD -MF $(@:.o=.d) -c -o $@
 
 # Rule for assembling .s files
 $(S_OBJS): %.o : %.s
-	$(CC) $(ASFLAGS) $(CPPFLAGS) -x assembler-with-cpp $< -MMD -MF $(@:.o=.d) -c -o $@
+	clang $(ASFLAGS) $(CPPFLAGS) -x assembler-with-cpp $< -MMD -MF $(@:.o=.d) -c -o $@
 
 clean:
 	rm -rf $(C_OBJS) $(S_OBJS) $(TARGET) $(C_DEPS) $(S_DEPS)

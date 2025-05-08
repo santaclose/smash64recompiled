@@ -47,10 +47,7 @@ target_include_directories(rt64 PRIVATE ${CMAKE_BINARY_DIR}/rt64/src)
 add_library(RecompiledFuncs STATIC)
 
 target_compile_options(RecompiledFuncs PRIVATE
-    # -Wno-unused-but-set-variable
     -fno-strict-aliasing
-    -Wno-unused-variable
-    -Wno-implicit-function-declaration
 )
 
 target_include_directories(RecompiledFuncs PRIVATE
@@ -69,10 +66,7 @@ target_sources(RecompiledFuncs PRIVATE ${FUNC_C_SOURCES} ${FUNC_CXX_SOURCES})
 add_library(PatchesLib STATIC)
 
 target_compile_options(PatchesLib PRIVATE
-    # -Wno-unused-but-set-variable
     -fno-strict-aliasing
-    -Wno-unused-variable
-    -Wno-implicit-function-declaration
 )
 
 target_include_directories(PatchesLib PRIVATE

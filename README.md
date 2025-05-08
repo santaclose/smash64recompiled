@@ -1,6 +1,19 @@
 # Super Smash Bros: Recompiled
 Super Smash Bros: Recompiled is a project that uses [N64: Recompiled](https://github.com/Mr-Wiseguy/N64Recomp) to **statically recompile** Super Smash Bros into a native port with many new features and enhancements. This project uses [RT64](https://github.com/rt64/rt64) as the rendering engine to provide some of these enhancements.
 
+## Updated instructions to build
+Use the decompilation with patch applied to generate the elf file and place it in the repo root directory (on Linux).
+Use make to generate patches elf file.
+Run `N64Recomp\build\Release\N64Recomp.exe smashbrothers.us.toml`
+Run `N64Recomp\build\Release\N64Recomp.exe patches.toml`
+Run `N64Recomp\build\Release\RSPRecomp.exe n_aspMain.us.toml`
+Apply patch for N64ModernRuntime:
+- `cd lib\N64ModernRuntime\`
+- `git apply ..\..\N64ModernRuntime.patch`
+- `cd ../../`
+Make build folder: `mkdir build && cd build`
+Generate VS solution: `cmake ..`
+
 ### [Check out the latest release here](https://github.com/Mr-Wiseguy/Zelda64Recomp/releases/latest).
 
 ### **This repository and its releases do not contain game assets. The original game is required to build or run this project.**
